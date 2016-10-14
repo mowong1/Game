@@ -7,6 +7,7 @@ var mainState = {
         // That's where we load the game's assets
         // Load the image
         game.load.image("baymax","baymax.jpg");
+        game.load.image("gummybear","gummybear.jpg");
     }
     , create: function () {
         // This function is called after the 'preload' function 
@@ -14,11 +15,17 @@ var mainState = {
         
         this.keyboard = game.input.keyboard.createCursorKeys();
         this.player = game.add.sprite(300,0,"baymax");
-        this.player.scale.setTo(1.5,1.5);
+        this.player.scale.setTo(.75,.75);
+       
+        //makes group of stuff
+        this.coins = game.add.group(); 
+        this.coins.enableBody = true;
+        this.coins.createMultiple( 10, "gummybear");
+        
         game.physics.arcade.enable(this.player);
         this.player.body.gravity.y = 0;
-        
         this.player.body.collideWorldBounds = true;
+        game.time.events.loop(220, this. addCoins, this);
 
     }
     , update: function () {
@@ -30,9 +37,25 @@ var mainState = {
         }if( this.keyboard.down.isDown) {
             this.player.body.velocity.y = 300;
         }if( this.keyboard.up.isDown) {
-            this.player.body.velocity.y = -sss300;
+            this.player.body.velocity.y = -300;
+        
         }
         // This contains Game Logic 
+    }
+    ,addCoins: function(){
+        var coin = this.coins.getFirstDead();
+        if (!coin) {
+            return;
+        }
+        coin.scale.setTo(0.2, 0.2);
+        coin.anchor.setTo(.5,1);
+        coin.reset( game.rnd.pick([game.width/2,0]),0);
+        coin.body.gravity.y = 500;
+        coin.body.velocity.x = 100 *
+        game.rnd.pick([-2,2]);
+        coin.body.bounce.x = 1;
+        coin.checkWorldBounds = true;
+        coin.outOfBoundsKill = true;
     }
 };
 // We initialize Phaser
